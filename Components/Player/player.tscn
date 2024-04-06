@@ -1,0 +1,71 @@
+[gd_scene load_steps=10 format=3 uid="uid://0lruj2mansqb"]
+
+[ext_resource type="Script" path="res://Components/Player/player.gd" id="1_4jolt"]
+[ext_resource type="Texture2D" uid="uid://xs1p8kfb4kov" path="res://Components/Player/body.png" id="2_qawad"]
+[ext_resource type="Texture2D" uid="uid://cp5uss2g8afma" path="res://Components/Player/head.png" id="3_oerq5"]
+[ext_resource type="Texture2D" uid="uid://c8qrmwg8mytst" path="res://Components/Player/leg.png" id="4_00j2p"]
+[ext_resource type="Texture2D" uid="uid://dt8n4dbnrvs88" path="res://Components/Player/arm_back.png" id="5_45vlw"]
+[ext_resource type="Texture2D" uid="uid://qw2jqoauyefx" path="res://Components/Player/arm.png" id="7_8cr6o"]
+[ext_resource type="Texture2D" uid="uid://daywb8wl61tem" path="res://Components/Player/sword.png" id="8_k6wmn"]
+[ext_resource type="Texture2D" uid="uid://dm7k7ru5yhdrc" path="res://Components/Player/shield.png" id="9_5hof8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4vphv"]
+size = Vector2(134, 385)
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_4jolt")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -74.5)
+shape = SubResource("RectangleShape2D_4vphv")
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Body" type="Sprite2D" parent="Visual"]
+texture = ExtResource("2_qawad")
+
+[node name="Head" type="Sprite2D" parent="Visual/Body"]
+position = Vector2(-22, -157)
+texture = ExtResource("3_oerq5")
+offset = Vector2(15, -57)
+
+[node name="LegLeft" type="Sprite2D" parent="Visual/Body"]
+show_behind_parent = true
+position = Vector2(-34, 55)
+texture = ExtResource("4_00j2p")
+offset = Vector2(-1, 31)
+
+[node name="LegRight" type="Sprite2D" parent="Visual/Body"]
+show_behind_parent = true
+position = Vector2(32, 58)
+rotation = -0.135445
+texture = ExtResource("4_00j2p")
+offset = Vector2(-0.913567, 24.7027)
+
+[node name="ArmBack" type="Sprite2D" parent="Visual/Body"]
+show_behind_parent = true
+position = Vector2(52, -34)
+rotation = -0.785398
+texture = ExtResource("5_45vlw")
+offset = Vector2(7.80634, 35.0908)
+
+[node name="Sword" type="Sprite2D" parent="Visual/Body/ArmBack"]
+position = Vector2(18.5221, 62.5416)
+rotation = 1.5708
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("8_k6wmn")
+offset = Vector2(1.94473, -228.163)
+
+[node name="ArmFront" type="Sprite2D" parent="Visual/Body"]
+position = Vector2(-61, -42)
+texture = ExtResource("7_8cr6o")
+offset = Vector2(-5, 33)
+
+[node name="Shield" type="Sprite2D" parent="Visual/Body/ArmFront"]
+visible = false
+position = Vector2(98, 217)
+texture = ExtResource("9_5hof8")
+
+[node name="Sfx" type="Node" parent="."]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
