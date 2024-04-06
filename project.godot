@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Brno Game Jam 2024"
-run/main_scene="res://Components/LeaderboardApi/LeaderboardApi.tscn"
+run/main_scene="res://Scenes/Game.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.svg"
 

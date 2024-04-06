@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-@export var game: Node2D;
+@export var game: Node2D
 
 @export var GRAVITY = 70 * 70 * 1.2
 @export var SPEED   = 40000 #40000
@@ -9,6 +9,7 @@ extends CharacterBody2D
 
 enum State {
   READY,
+  MOUNTED,
   DEAD
 }
 
@@ -32,6 +33,9 @@ func _ready():
 
 func _physics_process(delta):
 	if game and game.paused:
+		return
+
+	if state == State.MOUNTED:
 		return
 
 	motion.y += GRAVITY * delta
@@ -131,5 +135,17 @@ func handle_jumping(delta):
 
 func handle_attack():
 	if Input.is_action_just_pressed("attack"):
+		$Visual/Body/ArmBack/Sword/Area2D.attack()
 		anim_sword.play("Attack")
+
+func _on_animation_player_animation_finished(anim_name):
+	$Visual/Body/ArmBack/Sword/Area2D.attacking = false
+
+func mount(mountable):
+	reparent(mountable.mount_point)
+	$AnimationPlayer.play("Mount")
+	state = State.MOUNTED
+	var tween = create_tween().parallel()
+	tween.tween_property(self, 'position', mountable.mount_point.position, 0.2).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	tween.tween_property($Visual/Body, 'rotation', 0, 0.2).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 

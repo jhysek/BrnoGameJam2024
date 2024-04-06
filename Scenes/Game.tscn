@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://bohyjiw750h4u"]
+[gd_scene load_steps=11 format=3 uid="uid://bohyjiw750h4u"]
 
 [ext_resource type="Script" path="res://Scenes/Game.gd" id="1_4sru6"]
 [ext_resource type="Texture2D" uid="uid://bjuvmqi7nls1e" path="res://Assets/tileset.png" id="1_m7qve"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cjfdlcd2odq3c" path="res://Components/Horse/horse.tscn" id="4_dvtop"]
 [ext_resource type="AudioStream" uid="uid://c26giyi8comly" path="res://Assets/Carmack.mp3" id="5_4ege4"]
 [ext_resource type="PackedScene" uid="uid://d4g312fn0bvrl" path="res://Components/Vignette/vignette.tscn" id="6_vopnb"]
+[ext_resource type="PackedScene" uid="uid://c74neuccncur" path="res://Components/Enemy/enemy.tscn" id="7_sgfgj"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_s5ifp"]
 texture = ExtResource("1_m7qve")
@@ -57,9 +58,6 @@ offset_right = 1844.0
 offset_bottom = 1035.0
 color = Color(0.211765, 0.211765, 0.211765, 1)
 
-[node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(0.5, 0.5)
-
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_66lrg")
 format = 2
@@ -68,22 +66,32 @@ format = 2
 
 [node name="Floor" type="StaticBody2D" parent="Environment"]
 position = Vector2(-5, -98)
+collision_layer = 3
+collision_mask = 3
 
 [node name="Polygon2D" type="Polygon2D" parent="Environment/Floor"]
 color = Color(0.0431373, 0.0431373, 0.0431373, 1)
-polygon = PackedVector2Array(-528, 93, -494, 235, -306, 281, 21, 281, 321, 279, 522, 271, 554, 54, 751, 54, 753, 437, -646, 421, -646, 113)
+polygon = PackedVector2Array(-1099, 163, -494, 235, -306, 281, 21, 281, 321, 279, 522, 271, 1293, 152, 3465, -18, 753, 437, -1860, 451, -1810, 173)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Environment/Floor"]
 
+[node name="Horse" parent="." node_paths=PackedStringArray("game") instance=ExtResource("4_dvtop")]
+position = Vector2(297, -443)
+scale = Vector2(0.66, 0.66)
+game = NodePath("..")
+metadata/_edit_horizontal_guides_ = [656.0]
+metadata/_edit_vertical_guides_ = [-73.0, -158.0, 122.0, 213.0]
+
 [node name="Player" parent="." node_paths=PackedStringArray("game") instance=ExtResource("3_1q8uk")]
-position = Vector2(9, -586)
+position = Vector2(-235, -214)
 scale = Vector2(0.3, 0.3)
 game = NodePath("..")
 
-[node name="Horse" parent="." instance=ExtResource("4_dvtop")]
-visible = false
-position = Vector2(230, -232)
-scale = Vector2(0.66, 0.66)
+[node name="Camera2D" type="Camera2D" parent="Player"]
+position = Vector2(783.333, 713.333)
+scale = Vector2(3.33333, 3.33333)
+zoom = Vector2(0.3, 0.3)
+position_smoothing_enabled = true
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_4ege4")
@@ -96,3 +104,5 @@ mouse_filter = 2
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_p2a15")
+
+[node name="Enemy" parent="." instance=ExtResource("7_sgfgj")]
