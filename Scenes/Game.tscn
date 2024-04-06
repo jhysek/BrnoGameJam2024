@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bohyjiw750h4u"]
+[gd_scene load_steps=10 format=3 uid="uid://bohyjiw750h4u"]
 
 [ext_resource type="Script" path="res://Scenes/Game.gd" id="1_4sru6"]
 [ext_resource type="Texture2D" uid="uid://bjuvmqi7nls1e" path="res://Assets/tileset.png" id="1_m7qve"]
@@ -41,6 +41,12 @@ physics_layer_0/collision_layer = 1
 terrain_set_0/mode = 0
 sources/0 = SubResource("TileSetAtlasSource_s5ifp")
 
+[sub_resource type="Environment" id="Environment_p2a15"]
+tonemap_mode = 3
+glow_enabled = true
+glow_intensity = 1.42
+glow_bloom = 0.11
+
 [node name="Game" type="Node2D"]
 script = ExtResource("1_4sru6")
 
@@ -75,6 +81,7 @@ scale = Vector2(0.3, 0.3)
 game = NodePath("..")
 
 [node name="Horse" parent="." instance=ExtResource("4_dvtop")]
+visible = false
 position = Vector2(230, -232)
 scale = Vector2(0.66, 0.66)
 
@@ -86,3 +93,6 @@ autoplay = true
 
 [node name="Vignette" parent="UI" instance=ExtResource("6_vopnb")]
 mouse_filter = 2
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_p2a15")

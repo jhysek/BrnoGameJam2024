@@ -3,7 +3,7 @@ extends CharacterBody2D
 @export var game: Node2D;
 
 @export var GRAVITY = 70 * 70 * 1.2
-@export var SPEED   = 60000 #40000
+@export var SPEED   = 40000 #40000
 @export var JUMP_SPEED  = -1600
 @export var COYOTE_TIME = 0.11
 
@@ -56,8 +56,8 @@ func handle_walking(delta):
 	if Input.is_action_pressed('ui_right'):
 		if !in_air and anim.current_animation != "WalkRight":
 			anim.play("WalkRight")
-
-		$Visual.scale.x = 1
+		if in_air:
+			$Visual.scale.x = 1
 		motion.x = min(motion.x + SPEED * delta, SPEED * delta)
 
 		if sfx_run and !sfx_run.playing and !in_air:
@@ -67,7 +67,9 @@ func handle_walking(delta):
 	if Input.is_action_pressed('ui_left'):
 		if not in_air and anim.current_animation != "WalkLeft":
 			anim.play("WalkLeft")
-		$Visual.scale.x = -1
+
+		if in_air:
+			$Visual.scale.x = -1
 		motion.x = max(motion.x - SPEED * delta, -SPEED * delta)
 		if sfx_run and !sfx_run.playing and !in_air:
 			pass
