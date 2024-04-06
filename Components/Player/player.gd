@@ -5,7 +5,7 @@ extends CharacterBody2D
 @export var GRAVITY = 70 * 70 * 1.2
 @export var SPEED   = 40000 #40000
 @export var JUMP_SPEED  = -1600
-@export var COYOTE_TIME = 0.11
+@export var COYOTE_TIME = 0.14
 
 enum State {
   READY,
@@ -16,11 +16,14 @@ var double_jumped = false
 var in_air = false
 var was_in_air = false
 var jump_timeout = 0
+var prev_anim = "Idle"
 
 var state = State.READY
 var motion = Vector2(0,0)
 
 @onready var anim = $AnimationPlayer
+@onready var sword = $Visual/Body/ArmBack
+@onready var anim_sword = $Visual/Body/ArmBack/AnimationPlayer
 @onready var sfx_run = null
 
 func _ready():
@@ -45,6 +48,7 @@ func _physics_process(delta):
 func controlled_process(delta):
 	handle_jumping(delta)
 	handle_walking(delta)
+	handle_attack()
 
 	# TODO: will I have multiple states?
 	#if state != State.READY:
@@ -89,7 +93,7 @@ func handle_jumping(delta):
 
 	if grounded:
 		in_air = false
-		double_jumped = false
+		double_jumped = true
 		jump_timeout = 0
 	elif !in_air and jump_timeout <= 0:
 		jump_timeout = COYOTE_TIME
@@ -105,22 +109,27 @@ func handle_jumping(delta):
 
 	was_in_air = in_air
 
-	print("IN AIR: " + str(in_air))
-	print("DOUBLE JUMPED: " + str(double_jumped))
-
 	if (!in_air or !double_jumped) and Input.is_action_just_pressed("ui_up"):
 		print("UP")
 		if in_air:
 			double_jumped = true
-			# anim.play("DoubleJump")
+			if $Visual.scale.x == 1:
+				anim.play("DoubleJump")
+			else:
+				anim.play("DoubleJumpLeft")
 			# $Sfx/DoubleJump.play()
 		else:
 			in_air = true
-			#anim.play("Jump")
+			double_jumped = false
+			anim.play("Jump")
 			#$Sfx/Run.stop()
 			#$Sfx/Jump.play()
 		jump_timeout = 0
 
-		print("MOTION SETTING TO UP SPEED")
 		motion.y = JUMP_SPEED
 		#sfx_run.stop()
+
+func handle_attack():
+	if Input.is_action_just_pressed("attack"):
+		anim_sword.play("Attack")
+
