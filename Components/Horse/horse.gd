@@ -3,7 +3,7 @@ extends CharacterBody2D
 @export var STATIC  = false
 @export var GRAVITY = 70 * 70 * 1.2
 @export var SPEED   = 70000
-@export var JUMP_SPEED  = -1600
+@export var JUMP_SPEED  = -3600
 @export var COYOTE_TIME = 0.14
 
 @export var game: Node2D;
@@ -98,8 +98,6 @@ func handle_jump():
 		#$Sfx/Jump.play()
 		#$DustParticles.emitting = true
 		motion.y = JUMP_SPEED
-	else:
-		unmount()
 
 func handle_attack():
 	if state == State.MOUNTED and Input.is_action_pressed('attack'):

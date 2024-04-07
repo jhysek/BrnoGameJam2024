@@ -1,5 +1,7 @@
 extends Area2D
 
+signal on_hit
+
 var attacking = false
 
 func attack():
@@ -10,3 +12,6 @@ func attack():
 
 func attack_done():
 	attacking = false
+
+func hit():
+	emit_signal("on_hit")

@@ -14,7 +14,7 @@ func _process(delta):
 		update_time()
 
 func _input(event):
-	if Input.is_key_pressed(KEY_R):
+	if !paused and Input.is_key_pressed(KEY_R):
 		restart_level()
 
 func restart_level():
@@ -30,10 +30,44 @@ func update_time():
 	$UI/Time.text = str(minutes) + ":" + str(seconds)
 
 func _on_player_died():
-	print("DEAD!")
 	restart_level()
 
 func _on_exit_exit_reached():
 	stop_time = Time.get_unix_time_from_system()
 	update_time()
-	print("FINISHED")
+	$UI/Panel/Time.text = "Finished in " + $UI/Time.text
+	$UI/AnimationPlayer.play("ShowResult")
+	$UI/Panel/Results.hide()
+	$UI/Panel/Again.hide()
+	paused = true
+
+
+func _on_again_pressed():
+	if $UI/Panel/Again.visible:
+		restart_level()
+
+
+func _on_save_pressed():
+	var name = $UI/Panel/TextEdit.text
+	if name == "":
+		name = "anonymous"
+	await LeaderboardApi.save(name, int(stop_time - start_time))
+	var results = await LeaderboardApi.top5()
+	update_results(results)
+	$UI/Panel/Timer.start()
+
+func update_results(results):
+	$UI/Panel/Save.hide()
+	$UI/Panel/TextEdit.hide()
+	$UI/Panel/Label2.hide()
+	var res = ""
+	for item in results:
+		res += item.score + " \t " + item.player + " \n"
+	$UI/Panel/Results.text = "TOP 5:\n\n" + res
+	$UI/Panel/Results.show()
+	$UI/Panel/Again.show()
+
+
+func _on_timer_timeout():
+	var results = await LeaderboardApi.top5()
+	update_results(results)

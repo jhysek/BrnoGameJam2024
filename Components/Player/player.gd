@@ -7,7 +7,7 @@ signal died
 @export var game: Node2D
 
 @export var GRAVITY = 70 * 70 * 1.2
-@export var SPEED   = 40000 #40000
+@export var SPEED   = 50000 #40000
 @export var JUMP_SPEED  = -1600
 @export var COYOTE_TIME = 0.14
 
@@ -119,8 +119,7 @@ func handle_jumping(delta):
 			in_air = true
 
 	if was_in_air and !in_air:
-		pass
-		#$Sfx/Jump.play()
+		sfx_jump()
 
 	was_in_air = in_air
 
@@ -135,13 +134,14 @@ func handle_jumping(delta):
 				anim.play("DoubleJump")
 			else:
 				anim.play("DoubleJumpLeft")
-			# $Sfx/DoubleJump.play()
+			sfx_doublejump()
+
 		else:
 			in_air = true
 			double_jumped = false
 			anim.play("Jump")
 			#$Sfx/Run.stop()
-			#$Sfx/Jump.play()
+			sfx_jump()
 		jump_timeout = 0
 		$DustParticles.emitting = true
 		motion.y = JUMP_SPEED
@@ -149,12 +149,13 @@ func handle_jumping(delta):
 
 func handle_attack():
 	if Input.is_action_just_released("attack"):
-		print("RELEASE")
 		$Visual/Body/ArmBack/Sword/Area2D.attack()
+		$Sfx/Swoosh2.play()
+		sfx_attack()
 		anim_sword.play("AttackRelease")
 
 	if Input.is_action_just_pressed("attack"):
-		print("PRESS")
+		$Sfx/Swoosh1.play()
 		anim_sword.play("AttackPress")
 
 
@@ -177,4 +178,24 @@ func unmount():
 	anim.play("Unmount")
 
 func die():
+	state = State.DEAD
+	anim.play("Die")
+	$Sfx/Die.play()
+
+func sfx_doublejump():
+	$Sfx/DoubleJump.play()
+
+func sfx_jump():
+	var i = randi() % 4 + 1
+	get_node("Sfx/Jump" + str(i)).play()
+
+func sfx_attack():
+	var i = randi() % 2 + 1
+	get_node("Sfx/Attack" + str(i)).play()
+
+func _on_area_2d_on_hit():
+	$Sfx/Hit.play()
+
+
+func _on_die_finished():
 	emit_signal("died")

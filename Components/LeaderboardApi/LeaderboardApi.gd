@@ -7,9 +7,9 @@ func _ready():
 		"log_level": 1
 	})
 
-func top20():
+func top5():
 	var result = []
-	var response: Dictionary = await SilentWolf.Scores.get_scores(20).sw_get_scores_complete
+	var response: Dictionary = await SilentWolf.Scores.get_scores(5).sw_get_scores_complete
 	for score in response.scores:
 		result.append({
 			player  = score.player_name,

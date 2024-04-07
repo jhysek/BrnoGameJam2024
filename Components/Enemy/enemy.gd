@@ -6,6 +6,7 @@ var path = []
 var target_idx = 0
 var target
 var direction = Vector2.LEFT
+var dead = false
 
 const SPEED = 10000
 
@@ -30,7 +31,6 @@ func _physics_process(delta):
 		velocity.y += gravity * delta
 
 	if target:
-		print("-> " + str(target))
 		if abs(target.x - position.x) < 10:
 			next_target()
 
@@ -49,20 +49,23 @@ func _physics_process(delta):
 	move_and_slide()
 
 func hit():
+	if dead:
+		return
+
 	var splash = $BloodSplash
 	if !splash:
 		return
+	dead = true
 	splash.reparent(get_parent())
 	splash.emitting = true
 	queue_free()
 
 func _on_hitbox_area_entered(area):
 	if area.is_in_group("Weapon") and area.attacking:
+		area.hit()
 		hit()
 
-
 func _on_hitbox_body_entered(body):
-	print("HIT")
 	next_target()
 
 

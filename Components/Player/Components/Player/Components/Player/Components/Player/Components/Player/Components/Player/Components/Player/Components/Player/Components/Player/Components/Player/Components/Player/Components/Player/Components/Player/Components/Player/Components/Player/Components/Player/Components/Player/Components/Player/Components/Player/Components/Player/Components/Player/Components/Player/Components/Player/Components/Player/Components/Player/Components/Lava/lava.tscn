@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://bd0jyqt4niwok"]
+
+[ext_resource type="Script" path="res://Components/Lava/lava.gd" id="1_h25i8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_esysc"]
+
+[node name="Lava" type="ColorRect"]
+modulate = Color(0.95, 0.3325, 0, 1)
+offset_left = 2298.0
+offset_top = 1146.0
+offset_right = 4987.0
+offset_bottom = 1550.0
+script = ExtResource("1_h25i8")
+
+[node name="Area" type="Area2D" parent="."]
+position = Vector2(33, 24)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area"]
+shape = SubResource("RectangleShape2D_esysc")
+
+[connection signal="body_entered" from="Area" to="." method="_on_area_body_entered"]

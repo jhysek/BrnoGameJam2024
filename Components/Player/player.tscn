@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://0lruj2mansqb"]
+[gd_scene load_steps=45 format=3 uid="uid://0lruj2mansqb"]
 
 [ext_resource type="Script" path="res://Components/Player/player.gd" id="1_4jolt"]
 [ext_resource type="Texture2D" uid="uid://xs1p8kfb4kov" path="res://Components/Player/body.png" id="2_qawad"]
@@ -10,6 +10,16 @@
 [ext_resource type="Texture2D" uid="uid://daywb8wl61tem" path="res://Components/Player/sword.png" id="8_k6wmn"]
 [ext_resource type="Texture2D" uid="uid://dm7k7ru5yhdrc" path="res://Components/Player/shield.png" id="9_5hof8"]
 [ext_resource type="Texture2D" uid="uid://dgpgxce7rmloe" path="res://Components/Player/dust.png" id="10_hpgck"]
+[ext_resource type="AudioStream" uid="uid://dtow6netv84m3" path="res://Components/Player/jump1.wav" id="11_dx25i"]
+[ext_resource type="AudioStream" uid="uid://dxfko0p5kpa5l" path="res://Components/Player/swish-8.wav" id="12_px5v0"]
+[ext_resource type="AudioStream" uid="uid://b0bwyrcpe46gr" path="res://Components/Player/jump3.wav" id="13_4x5kq"]
+[ext_resource type="AudioStream" uid="uid://bv7ef470r33cd" path="res://Components/Player/jump4.wav" id="14_iwv0g"]
+[ext_resource type="AudioStream" uid="uid://b3vqaur3viuoo" path="res://Assets/dead.wav" id="15_q07vi"]
+[ext_resource type="AudioStream" uid="uid://038fywcgm5sl" path="res://Components/Enemy/hit.wav" id="16_iirwm"]
+[ext_resource type="AudioStream" uid="uid://dtjttpwtfo3cp" path="res://Assets/swish-8.wav" id="17_np432"]
+[ext_resource type="AudioStream" uid="uid://d1sarryys0lwy" path="res://Assets/swish-10.wav" id="18_q10nf"]
+[ext_resource type="AudioStream" uid="uid://dvrv802ii8twp" path="res://Assets/attack1.wav" id="19_7hf8d"]
+[ext_resource type="AudioStream" uid="uid://c8b2oca6lnd3x" path="res://Assets/attack2.wav" id="20_0go27"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4vphv"]
 size = Vector2(134, 385)
@@ -1563,6 +1573,18 @@ tracks/18/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 1)]
 }
+tracks/19/type = "value"
+tracks/19/imported = false
+tracks/19/enabled = true
+tracks/19/path = NodePath("Visual:modulate")
+tracks/19/interp = 1
+tracks/19/loop_wrap = true
+tracks/19/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
 
 [sub_resource type="Animation" id="Animation_jqc5y"]
 resource_name = "Unmount"
@@ -1973,11 +1995,75 @@ tracks/11/keys = {
 "values": [0.0]
 }
 
+[sub_resource type="Animation" id="Animation_70im7"]
+resource_name = "Die"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visual/Body:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Visual:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(0.329877),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Visual:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(0.329877, 1),
+"update": 0,
+"values": [0.0, 1.5367]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Visual/Body/ArmBack:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(0.329877, 1),
+"update": 0,
+"values": [-0.785398, -1.7331]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Visual:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.431373)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_1rgme"]
 _data = {
 "Attack": SubResource("Animation_2ohki"),
 "AttackPress": SubResource("Animation_ncf8a"),
 "AttackRelease": SubResource("Animation_2o8pv"),
+"Die": SubResource("Animation_70im7"),
 "DoubleJump": SubResource("Animation_kahm4"),
 "DoubleJumpLeft": SubResource("Animation_wn2fb"),
 "Idle": SubResource("Animation_h0k4c"),
@@ -2086,8 +2172,44 @@ texture = ExtResource("9_5hof8")
 
 [node name="Sfx" type="Node" parent="."]
 
+[node name="Jump1" type="AudioStreamPlayer" parent="Sfx"]
+stream = ExtResource("11_dx25i")
+
+[node name="Jump2" type="AudioStreamPlayer" parent="Sfx"]
+stream = ExtResource("12_px5v0")
+
+[node name="DoubleJump" type="AudioStreamPlayer" parent="Sfx"]
+stream = ExtResource("12_px5v0")
+
+[node name="Jump3" type="AudioStreamPlayer" parent="Sfx"]
+stream = ExtResource("13_4x5kq")
+
+[node name="Jump4" type="AudioStreamPlayer" parent="Sfx"]
+stream = ExtResource("14_iwv0g")
+
+[node name="Die" type="AudioStreamPlayer" parent="Sfx"]
+stream = ExtResource("15_q07vi")
+
+[node name="Hit" type="AudioStreamPlayer" parent="Sfx"]
+stream = ExtResource("16_iirwm")
+
+[node name="Swoosh1" type="AudioStreamPlayer" parent="Sfx"]
+stream = ExtResource("17_np432")
+
+[node name="Swoosh2" type="AudioStreamPlayer" parent="Sfx"]
+stream = ExtResource("18_q10nf")
+
+[node name="Attack1" type="AudioStreamPlayer" parent="Sfx"]
+stream = ExtResource("19_7hf8d")
+
+[node name="Attack2" type="AudioStreamPlayer" parent="Sfx"]
+stream = ExtResource("20_0go27")
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 "": SubResource("AnimationLibrary_1rgme")
 }
 autoplay = "Idle"
+
+[connection signal="on_hit" from="Visual/Body/ArmBack/Sword/Area2D" to="." method="_on_area_2d_on_hit"]
+[connection signal="finished" from="Sfx/Die" to="." method="_on_die_finished"]
