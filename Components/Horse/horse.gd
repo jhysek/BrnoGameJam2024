@@ -1,5 +1,6 @@
 extends CharacterBody2D
 
+@export var STATIC  = false
 @export var GRAVITY = 70 * 70 * 1.2
 @export var SPEED   = 70000
 @export var JUMP_SPEED  = -1600
@@ -24,10 +25,13 @@ var mounted
 var mountable = true
 
 func _ready():
-	if !game:
+	if !STATIC and !game:
 		assert(game)
 
 func _physics_process(delta):
+	if STATIC:
+		return
+
 	if game and game.paused:
 		return
 

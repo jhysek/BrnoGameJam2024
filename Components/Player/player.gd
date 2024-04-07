@@ -3,7 +3,7 @@ extends CharacterBody2D
 signal level_started
 signal died
 
-
+@export var STATIC = false
 @export var game: Node2D
 
 @export var GRAVITY = 70 * 70 * 1.2
@@ -36,7 +36,7 @@ var motion = Vector2(0,0)
 @onready var orig_scale = scale
 
 func _ready():
-	if !game:
+	if !STATIC and !game:
 		assert(game)
 
 func _physics_process(delta):
@@ -48,10 +48,10 @@ func _physics_process(delta):
 
 	motion.y += GRAVITY * delta
 
-	if state != State.DEAD:
+	if !STATIC and state != State.DEAD:
 		controlled_process(delta)
 	else:
-		motion.x = lerp(motion.x, 0, 4 * delta)
+		motion.x = 0
 
 	set_velocity(motion)
 	move_and_slide()

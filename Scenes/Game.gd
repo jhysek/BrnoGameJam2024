@@ -3,13 +3,14 @@ extends Node2D
 var paused = false
 
 var start_time = 0
+var stop_time = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	Transition.openScene()
 
 func _process(delta):
-	if start_time > 0:
+	if start_time > 0 and stop_time == 0:
 		update_time()
 
 func _input(event):
@@ -31,3 +32,8 @@ func update_time():
 func _on_player_died():
 	print("DEAD!")
 	restart_level()
+
+func _on_exit_exit_reached():
+	stop_time = Time.get_unix_time_from_system()
+	update_time()
+	print("FINISHED")
