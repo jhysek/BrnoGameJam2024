@@ -7,14 +7,18 @@ var target_idx = 0
 var target
 var direction = Vector2.LEFT
 var dead = false
+var walking = true
 
 const SPEED = 10000
 
 @onready var anim = $AnimationPlayer
 
 func _ready():
-	for point in $Path.get_children():
-		path.append(position + point.position)
+	$Timer.wait_time = randi() % 6
+	$Timer.start()
+	if has_node("Path"):
+		for point in $Path.get_children():
+			path.append(position + point.position)
 
 	target_idx = 0
 	get_target()
@@ -27,13 +31,15 @@ func next_target():
 	get_target()
 
 func _physics_process(delta):
+	if dead or !walking:
+		return
+
 	if not is_on_floor():
 		velocity.y += gravity * delta
 
 	if target:
 		if abs(target.x - position.x) < 10:
 			next_target()
-
 
 		if target.x > position.x:
 			direction = Vector2.RIGHT
@@ -49,16 +55,19 @@ func _physics_process(delta):
 	move_and_slide()
 
 func hit():
+
 	if dead:
 		return
 
-	var splash = $BloodSplash
-	if !splash:
-		return
+	$Timer.stop()
+	anim.play("Die")
+	walking = false
+	collision_layer = 0
+	collision_mask = 0
+	$Timer.stop()
 	dead = true
-	splash.reparent(get_parent())
-	splash.emitting = true
-	queue_free()
+	$Hitbox.queue_free()
+	$BloodSplash.emitting = true
 
 func _on_hitbox_area_entered(area):
 	if area.is_in_group("Weapon") and area.attacking:
@@ -72,3 +81,15 @@ func _on_hitbox_body_entered(body):
 func _on_interest_area_body_entered(body):
 	if body.is_in_group("PhotoTarget"):
 		print("Oooo!")
+
+
+func _on_timer_timeout():
+	walking = false
+	anim.play("Shot")
+	$Timer.wait_time = randi() % 6
+	$Timer.start()
+
+
+func _on_animation_player_animation_finished(anim_name):
+	if anim_name == "Shot":
+		walking = true

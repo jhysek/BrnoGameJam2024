@@ -32,7 +32,9 @@ var motion = Vector2(0,0)
 @onready var anim = $AnimationPlayer
 @onready var sword = $Visual/Body/ArmBack
 @onready var anim_sword = $Visual/Body/ArmBack/AnimationPlayer
+@onready var cam = $Camera2D
 @onready var sfx_run = null
+
 @onready var orig_scale = scale
 
 func _ready():
@@ -127,7 +129,7 @@ func handle_jumping(delta):
 		if state == State.INIT:
 			state = State.READY
 			emit_signal("level_started")
-		print("UP")
+
 		if in_air:
 			double_jumped = true
 			if $Visual.scale.x == 1:
@@ -180,6 +182,7 @@ func unmount():
 func die():
 	state = State.DEAD
 	anim.play("Die")
+	cam.shake(0.5, 100, 50)
 	$Sfx/Die.play()
 
 func sfx_doublejump():
@@ -194,6 +197,7 @@ func sfx_attack():
 	get_node("Sfx/Attack" + str(i)).play()
 
 func _on_area_2d_on_hit():
+	cam.shake(0.3, 100, 20)
 	$Sfx/Hit.play()
 
 
