@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://6878verlblnf"]
-
-[ext_resource type="AudioStream" uid="uid://c26giyi8comly" path="res://Assets/Carmack.mp3" id="1_eu8ys"]
-
-[node name="Music" type="AudioStreamPlayer"]
-stream = ExtResource("1_eu8ys")
-autoplay = true
