@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=3 uid="uid://0lruj2mansqb"]
+[gd_scene load_steps=46 format=3 uid="uid://0lruj2mansqb"]
 
 [ext_resource type="Script" path="res://Components/Player/player.gd" id="1_4jolt"]
 [ext_resource type="Texture2D" uid="uid://xs1p8kfb4kov" path="res://Components/Player/body.png" id="2_qawad"]
@@ -20,6 +20,7 @@
 [ext_resource type="AudioStream" uid="uid://d1sarryys0lwy" path="res://Assets/swish-10.wav" id="18_q10nf"]
 [ext_resource type="AudioStream" uid="uid://dvrv802ii8twp" path="res://Assets/attack1.wav" id="19_7hf8d"]
 [ext_resource type="AudioStream" uid="uid://c8b2oca6lnd3x" path="res://Assets/attack2.wav" id="20_0go27"]
+[ext_resource type="AudioStream" uid="uid://bpkadqbyv3yg3" path="res://Assets/run2.wav" id="21_i70ic"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4vphv"]
 size = Vector2(134, 385)
@@ -2204,6 +2205,10 @@ stream = ExtResource("19_7hf8d")
 
 [node name="Attack2" type="AudioStreamPlayer" parent="Sfx"]
 stream = ExtResource("20_0go27")
+
+[node name="Run" type="AudioStreamPlayer" parent="Sfx"]
+stream = ExtResource("21_i70ic")
+volume_db = -12.632
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

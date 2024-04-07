@@ -33,7 +33,7 @@ var motion = Vector2(0,0)
 @onready var sword = $Visual/Body/ArmBack
 @onready var anim_sword = $Visual/Body/ArmBack/AnimationPlayer
 @onready var cam = $Camera2D
-@onready var sfx_run = null
+@onready var sfx_run = $Sfx/Run
 
 @onready var orig_scale = scale
 
@@ -77,9 +77,10 @@ func handle_walking(delta):
 			$Visual.scale.x = 1
 		motion.x = min(motion.x + SPEED * delta, SPEED * delta)
 
-		if sfx_run and !sfx_run.playing and !in_air:
-			pass
-			#sfx_run.play()
+		print("playing: " + str(sfx_run.playing) + " IN AUR: " + str(in_air))
+		if !sfx_run.playing and !in_air:
+			print("PLAY")
+			sfx_run.play()
 
 	if Input.is_action_pressed('ui_left'):
 		if state == State.INIT:
@@ -92,18 +93,18 @@ func handle_walking(delta):
 		if in_air:
 			$Visual.scale.x = -1
 		motion.x = max(motion.x - SPEED * delta, -SPEED * delta)
-		if sfx_run and !sfx_run.playing and !in_air:
-			pass
-			#sfx_run.play()
+		if !sfx_run.playing and !in_air:
+			print("RUN PLAY")
+			sfx_run.play()
 
 	elif !Input.is_action_pressed('ui_right'):
 		if !in_air and anim.current_animation != "Idle":
 			anim.play("Idle")
 		motion.x = 0
 
-	if sfx_run and sfx_run.playing:
-		sfx_run.stop()
-
+		if sfx_run and sfx_run.playing:
+			print("RUN STOP")
+			sfx_run.stop()
 
 func handle_jumping(delta):
 	var grounded = is_on_floor()
@@ -142,12 +143,13 @@ func handle_jumping(delta):
 			in_air = true
 			double_jumped = false
 			anim.play("Jump")
-			#$Sfx/Run.stop()
+			print("RUN STOP")
+			sfx_run.stop()
 			sfx_jump()
 		jump_timeout = 0
 		$DustParticles.emitting = true
 		motion.y = JUMP_SPEED
-		#sfx_run.stop()
+		sfx_run.stop()
 
 func handle_attack():
 	if Input.is_action_just_released("attack"):
