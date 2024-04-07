@@ -1,5 +1,9 @@
 extends CharacterBody2D
 
+signal level_started
+signal died
+
+
 @export var game: Node2D
 
 @export var GRAVITY = 70 * 70 * 1.2
@@ -7,7 +11,9 @@ extends CharacterBody2D
 @export var JUMP_SPEED  = -1600
 @export var COYOTE_TIME = 0.14
 
+
 enum State {
+  INIT,
   READY,
   MOUNTED,
   DEAD
@@ -19,13 +25,15 @@ var was_in_air = false
 var jump_timeout = 0
 var prev_anim = "Idle"
 
-var state = State.READY
+
+var state = State.INIT
 var motion = Vector2(0,0)
 
 @onready var anim = $AnimationPlayer
 @onready var sword = $Visual/Body/ArmBack
 @onready var anim_sword = $Visual/Body/ArmBack/AnimationPlayer
 @onready var sfx_run = null
+@onready var orig_scale = scale
 
 func _ready():
 	if !game:
@@ -54,14 +62,13 @@ func controlled_process(delta):
 	handle_walking(delta)
 	handle_attack()
 
-	# TODO: will I have multiple states?
-	#if state != State.READY:
- 	#	if !in_air:
-	#   	motion.x = 0
-	#  return
 
 func handle_walking(delta):
 	if Input.is_action_pressed('ui_right'):
+		if state == State.INIT:
+			state = State.READY
+			emit_signal("level_started")
+
 		if !in_air and anim.current_animation != "WalkRight":
 			anim.play("WalkRight")
 		if in_air:
@@ -73,6 +80,10 @@ func handle_walking(delta):
 			#sfx_run.play()
 
 	if Input.is_action_pressed('ui_left'):
+		if state == State.INIT:
+			state = State.READY
+			emit_signal("level_started")
+
 		if not in_air and anim.current_animation != "WalkLeft":
 			anim.play("WalkLeft")
 
@@ -114,6 +125,9 @@ func handle_jumping(delta):
 	was_in_air = in_air
 
 	if (!in_air or !double_jumped) and Input.is_action_just_pressed("ui_up"):
+		if state == State.INIT:
+			state = State.READY
+			emit_signal("level_started")
 		print("UP")
 		if in_air:
 			double_jumped = true
@@ -129,23 +143,38 @@ func handle_jumping(delta):
 			#$Sfx/Run.stop()
 			#$Sfx/Jump.play()
 		jump_timeout = 0
-
+		$DustParticles.emitting = true
 		motion.y = JUMP_SPEED
 		#sfx_run.stop()
 
 func handle_attack():
-	if Input.is_action_just_pressed("attack"):
+	if Input.is_action_just_released("attack"):
+		print("RELEASE")
 		$Visual/Body/ArmBack/Sword/Area2D.attack()
-		anim_sword.play("Attack")
+		anim_sword.play("AttackRelease")
 
-func _on_animation_player_animation_finished(anim_name):
-	$Visual/Body/ArmBack/Sword/Area2D.attacking = false
+	if Input.is_action_just_pressed("attack"):
+		print("PRESS")
+		anim_sword.play("AttackPress")
+
 
 func mount(mountable):
 	reparent(mountable.mount_point)
-	$AnimationPlayer.play("Mount")
+	anim.play("Mount")
 	state = State.MOUNTED
-	var tween = create_tween().parallel()
+	var tween = create_tween()
 	tween.tween_property(self, 'position', mountable.mount_point.position, 0.2).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	tween.tween_property($Visual/Body, 'rotation', 0, 0.2).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 
+func unmount():
+	var cam = $Camera2D
+	cam.reparent(get_parent())
+	reparent(game)
+	cam.reparent(self)
+	state = State.READY
+	scale = orig_scale
+	in_air = true
+	double_jumped = false
+	anim.play("Unmount")
+
+func die():
+	emit_signal("died")

@@ -20,11 +20,12 @@ var motion = Vector2(0,0)
 var in_air = false
 var was_in_air = false
 var sfx_run = null
+var mounted
+var mountable = true
 
 func _ready():
 	if !game:
 		assert(game)
-
 
 func _physics_process(delta):
 	if game and game.paused:
@@ -43,6 +44,7 @@ func _physics_process(delta):
 
 func controlled_process(delta):
 	handle_walking(delta)
+	handle_jump()
 	handle_attack()
 
 func handle_walking(delta):
@@ -76,18 +78,51 @@ func handle_walking(delta):
 	#if sfx_run and sfx_run.playing:
 	#	sfx_run.stop()
 
+func handle_jump():
+	var grounded = is_on_floor()
+
+	if grounded:
+		in_air = false
+
+	if !Input.is_action_just_pressed("ui_up"):
+		return
+
+	if !in_air:
+		in_air = true
+		anim.play("Jump")
+		#$Sfx/Run.stop()
+		#$Sfx/Jump.play()
+		#$DustParticles.emitting = true
+		motion.y = JUMP_SPEED
+	else:
+		unmount()
 
 func handle_attack():
-	pass
+	if state == State.MOUNTED and Input.is_action_pressed('attack'):
+		anim.play("Attack")
 
 func _on_mount_area_body_entered(body):
-	if state != State.MOUNTED and body.is_in_group("Player"):
+	if mountable and state != State.MOUNTED and body.is_in_group("Player"):
+		mountable = false
 		print("MOUNT")
 		anim.play("Mount")
 		body.mount(self)
+		mounted = body
 		state = State.MOUNTED
 
+func unmount():
+	if state == State.MOUNTED and mounted:
+		state = State.READY
+		mounted.unmount()
+		mounted = null
+		in_air = false
+		$Timer.start()
+		velocity = Vector2.ZERO
+		anim.play("Idle")
 
 func _on_animation_player_animation_finished(anim_name):
 	if anim_name == "Mount":
 		anim.play("Idle")
+
+func _on_timer_timeout():
+	mountable = true
