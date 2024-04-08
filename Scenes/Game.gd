@@ -4,6 +4,7 @@ var paused = false
 
 var start_time = 0
 var stop_time = 0
+var kills = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -67,7 +68,14 @@ func update_results(results):
 	$UI/Panel/Results.show()
 	$UI/Panel/Again.show()
 
-
 func _on_timer_timeout():
 	var results = await LeaderboardApi.top5()
 	update_results(results)
+
+func _on_player_killed():
+	kills += 1
+	$UI/Kills.text = str(kills)
+
+func _on_horse_killed():
+	kills += 1
+	$UI/Kills.text = str(kills)

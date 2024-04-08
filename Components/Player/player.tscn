@@ -36,7 +36,7 @@ offsets = PackedFloat32Array(0, 0.481013, 1)
 colors = PackedColorArray(1, 1, 1, 0.85098, 1, 1, 1, 0.870588, 1, 1, 1, 0)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ibhg6"]
-size = Vector2(69.6185, 474.76)
+size = Vector2(69.6185, 649.398)
 
 [sub_resource type="Animation" id="Animation_p12ny"]
 resource_name = "Attack"
@@ -2151,7 +2151,7 @@ collision_mask = 8
 script = ExtResource("7_ndwuc")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Visual/Body/ArmBack/Sword/Area2D"]
-position = Vector2(0.183653, -275.147)
+position = Vector2(0.183651, -187.828)
 shape = SubResource("RectangleShape2D_ibhg6")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Visual/Body/ArmBack"]

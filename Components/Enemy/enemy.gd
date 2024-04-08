@@ -24,11 +24,13 @@ func _ready():
 	get_target()
 
 func get_target():
-	target = path[target_idx]
+	if path.size() > 0:
+		target = path[target_idx]
 
 func next_target():
-	target_idx = (target_idx + 1) % path.size()
-	get_target()
+	if path.size() > 0:
+		target_idx = (target_idx + 1) % path.size()
+		get_target()
 
 func _physics_process(delta):
 	if dead or !walking:
@@ -59,6 +61,7 @@ func hit():
 	if dead:
 		return
 
+	$Sfx/Hit.play()
 	$Timer.stop()
 	anim.play("Die")
 	walking = false
@@ -70,7 +73,11 @@ func hit():
 	$BloodSplash.emitting = true
 
 func _on_hitbox_area_entered(area):
-	if area.is_in_group("Weapon") and area.attacking:
+	if area.is_in_group("Weapon"):
+		print("AREA ENTERED")
+		print('ATTACKING: ' + str(area.attacking))
+		print(area.name)
+	if area.is_in_group("Weapon") and (area.attacking or (area.swinged and area.in_air)):
 		area.hit()
 		hit()
 
@@ -86,7 +93,7 @@ func _on_interest_area_body_entered(body):
 func _on_timer_timeout():
 	walking = false
 	anim.play("Shot")
-	$Timer.wait_time = randi() % 6
+	$Timer.wait_time = randi() % 6 + 1
 	$Timer.start()
 
 

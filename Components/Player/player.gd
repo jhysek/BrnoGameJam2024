@@ -2,6 +2,7 @@ extends CharacterBody2D
 
 signal level_started
 signal died
+signal killed
 
 @export var STATIC = false
 @export var game: Node2D
@@ -77,9 +78,7 @@ func handle_walking(delta):
 			$Visual.scale.x = 1
 		motion.x = min(motion.x + SPEED * delta, SPEED * delta)
 
-		print("playing: " + str(sfx_run.playing) + " IN AUR: " + str(in_air))
 		if !sfx_run.playing and !in_air:
-			print("PLAY")
 			sfx_run.play()
 
 	if Input.is_action_pressed('ui_left'):
@@ -126,6 +125,8 @@ func handle_jumping(delta):
 
 	was_in_air = in_air
 
+	$Visual/Body/ArmBack/Sword/Area2D.in_air = in_air
+
 	if (!in_air or !double_jumped) and Input.is_action_just_pressed("ui_up"):
 		if state == State.INIT:
 			state = State.READY
@@ -161,25 +162,26 @@ func handle_attack():
 	if Input.is_action_just_pressed("attack"):
 		$Sfx/Swoosh1.play()
 		anim_sword.play("AttackPress")
-
+		$Visual/Body/ArmBack/Sword/Area2D.swing()
 
 func mount(mountable):
 	reparent(mountable.mount_point)
+	cam.zoomout()
 	anim.play("Mount")
 	state = State.MOUNTED
 	var tween = create_tween()
 	tween.tween_property(self, 'position', mountable.mount_point.position, 0.2).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 
-func unmount():
-	var cam = $Camera2D
-	cam.reparent(get_parent())
-	reparent(game)
-	cam.reparent(self)
-	state = State.READY
-	scale = orig_scale
-	in_air = true
-	double_jumped = false
-	anim.play("Unmount")
+#func unmount():
+#	var cam = $Camera2D
+#	cam.reparent(get_parent())
+#	reparent(game)
+#	cam.reparent(self)
+#	state = State.READY
+#	scale = orig_scale
+#	in_air = true
+#	double_jumped = false
+#	anim.play("Unmount")
 
 func die():
 	state = State.DEAD
@@ -199,9 +201,8 @@ func sfx_attack():
 	get_node("Sfx/Attack" + str(i)).play()
 
 func _on_area_2d_on_hit():
+	emit_signal("killed")
 	cam.shake(0.3, 100, 20)
-	$Sfx/Hit.play()
-
 
 func _on_die_finished():
 	emit_signal("died")

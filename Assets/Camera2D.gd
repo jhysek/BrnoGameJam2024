@@ -13,6 +13,9 @@ var _shake_x = false
 func _ready():
 	set_process(true)
 
+func zoomout():
+	$AnimationPlayer.play("Zoom")
+
 func shake(duration, frequency, amplitude, also_x = false):
 	_shake_x = also_x
 	_duration = duration
